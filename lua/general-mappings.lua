@@ -62,6 +62,12 @@ nmap('<Leader><Right>', ':tabNext<enter>')
 nmap('<Leader>o', ':tabonly<enter>')
 nmap('<Leader><Up>', ':tabclose<enter>')
 
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
 ---------- INSERT MODE MAPPINGS ----------
 -- shift+insert copies from XA_PRIMARY (mouse selection)
 -- this mapping copies from XA_SECONDARY (clipboard)
