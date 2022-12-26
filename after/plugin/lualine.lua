@@ -1,4 +1,4 @@
--- Set lualine as statusline
+-- Setup https://github.com/nvim-lualine/lualine.nvim
 -- See `:help lualine.txt`
 require('lualine').setup {
   options = {

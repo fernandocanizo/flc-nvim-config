@@ -1,4 +1,4 @@
--- Configure https://github.com/lewis6991/gitsigns.nvim
+-- Setup https://github.com/lewis6991/gitsigns.nvim
 -- See `:help gitsigns.txt`
 require('gitsigns').setup {
   signs = {
