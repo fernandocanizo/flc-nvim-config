@@ -12,10 +12,7 @@ if vim.g.flc_is_packer_bootstrapped then
 end
 
 require('general-settings')
-
--- Set colorscheme
-vim.o.termguicolors = true
-vim.cmd [[colorscheme onedark]]
+require('style')
 
 -- [[ Basic Keymaps ]]
 -- Set <space> as the leader key
