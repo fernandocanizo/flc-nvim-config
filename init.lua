@@ -75,6 +75,10 @@ local servers = {
 
   sumneko_lua = {
     Lua = {
+      -- Disable "Undefined global `vim`" message
+      diagnostics = {
+        globals = {'vim'}
+      },
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
