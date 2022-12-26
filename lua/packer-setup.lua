@@ -1,3 +1,18 @@
+-- Bootstrap `packer` if it's not installed yet
+-- This will take care of installing `packer` on new installations
+local ensure_packer = function()
+  local fun = vim.fn
+  local install_path = fun.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+  if fun.empty(fun.glob(install_path)) > 0 then
+    fun.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+    vim.cmd [[packadd packer.nvim]]
+    return true
+  end
+  return false
+end
+
+vim.g.flc_is_packer_bootstrapped = ensure_packer()
+
 require('packer').startup(function(use)
   -- Package manager
   use 'wbthomason/packer.nvim'
@@ -57,7 +72,9 @@ require('packer').startup(function(use)
     plugins(use)
   end
 
-  if is_bootstrap then
+  -- Automatically set up your configuration after cloning packer.nvim
+  -- Put this at the end after all plugins
+  if vim.g.flc_is_packer_bootstrapped then
     require('packer').sync()
   end
 end)
