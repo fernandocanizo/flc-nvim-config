@@ -13,7 +13,7 @@ end
 
 require('general-settings')
 require('style')
-require('general-keymappings')
+require('general-mappings')
 require('autocommands')
 
 -- Set lualine as statusline
