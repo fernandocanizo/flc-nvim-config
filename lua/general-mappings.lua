@@ -83,3 +83,10 @@ cmap([[%s/]], [[%s/\v]])
 -- needed
 cmap('W<enter>', 'w<enter>')
 cmap('X<enter>', 'x<enter>')
+
+-- have the benefits of `smartcase` but search strictly when using `*` or `#`,
+-- since I always use those to search for exact matches
+local asterisk = [[<cmd>:set hls<enter>:let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n]]
+local sharp = [[<cmd>:set hls<enter>:let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n]]
+vim.keymap.set('n', '*', asterisk, { noremap = true, silent = true })
+vim.keymap.set('n', '#', sharp, { noremap = true, silent = true })
