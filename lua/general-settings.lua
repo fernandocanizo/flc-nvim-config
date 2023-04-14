@@ -1,6 +1,9 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+-- Don't start from the beginning when searching
+vim.o.wrapscan = false
+
 -- Set highlight on search
 vim.o.hlsearch = true
 
