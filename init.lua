@@ -73,7 +73,9 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
 
-  sumneko_lua = {
+  --  flc 2023-07-10: me sale un mensaje de que 'sumneko_lua' no es una entrada válida
+  --  ver: https://github.com/nvim-lua/kickstart.nvim/issues/179
+  lua_ls = {
     Lua = {
       -- Disable "Undefined global `vim`" message
       diagnostics = {
