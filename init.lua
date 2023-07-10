@@ -106,7 +106,8 @@ mason_lspconfig.setup_handlers {
       on_attach = on_attach,
       settings = servers[server_name],
       -- should I set it up for any LS?
-      single_file_support = server_name == 'tsserver' or server_name == 'eslint',
+      -- single_file_support = server_name == 'tsserver' or server_name == 'eslint',
+      single_file_support = true
     }
   end,
 }
