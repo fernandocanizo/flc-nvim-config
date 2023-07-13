@@ -1,0 +1,2 @@
+require('highlight-trailing-spaces')
+
