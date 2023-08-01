@@ -1,6 +1,9 @@
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
+-- set a sane with for any unknown file type
+vim.o.textwidth = 80
+
 -- Don't start from the beginning when searching
 vim.o.wrapscan = false
 
