@@ -68,12 +68,6 @@ require('packer').startup(function(use)
 
   use { 'https://github.com/editorconfig/editorconfig-vim' }
 
-  -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
-  local has_plugins, plugins = pcall(require, 'custom.plugins')
-  if has_plugins then
-    plugins(use)
-  end
-
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if vim.g.flc_is_packer_bootstrapped then
