@@ -95,7 +95,3 @@ local asterisk = [[<cmd>:set hls<enter>:let @/='\C\<' . expand('<cword>') . '\>'
 local sharp = [[<cmd>:set hls<enter>:let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n]]
 vim.keymap.set('n', '*', asterisk, { noremap = true, silent = true })
 vim.keymap.set('n', '#', sharp, { noremap = true, silent = true })
-
--- nvim-tree mappings
-nmap('<Leader>t', ':NvimTreeOpen<enter>')
-
