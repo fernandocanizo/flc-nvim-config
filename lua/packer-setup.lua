@@ -66,15 +66,6 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
-  -- add a file navigtor cause I'm not comfortable with the one provided by
-  -- Telescope. It's awful: no default keybindings to simply open the navigator,
-  -- gotta configure a lot of stuff prior to use. The `g?` help mapping doesn't
-  -- work, or I don't know in which context does work. Also is not just a file
-  -- navigator, it messes with other editor functions, like the `<ctrl-v>`
-  -- mapping to make a vertical split view. That's pretty annoying. Gonna remove
-  -- it once I find a better option.
-  use { 'https://github.com/nvim-tree/nvim-tree.lua' }
-
   use { 'https://github.com/editorconfig/editorconfig-vim' }
 
   -- Add custom plugins to packer from ~/.config/nvim/lua/custom/plugins.lua
