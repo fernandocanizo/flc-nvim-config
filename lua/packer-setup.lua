@@ -68,6 +68,17 @@ require('packer').startup(function(use)
 
   use { 'https://github.com/editorconfig/editorconfig-vim' }
 
+  -- file navigator
+  use {
+    'https://github.com/nvim-neo-tree/neo-tree.nvim',
+      branch = "v3.x",
+      requires = {
+        'https://github.com/nvim-lua/plenary.nvim',
+        'https://github.com/nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+        'https://github.com/MunifTanjim/nui.nvim',
+      }
+  }
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if vim.g.flc_is_packer_bootstrapped then
