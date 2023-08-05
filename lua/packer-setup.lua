@@ -79,6 +79,14 @@ require('packer').startup(function(use)
       }
   }
 
+  use {
+    'https://github.com/willothy/nvim-cokeline',
+    requires = {
+      'https://github.com/nvim-lua/plenary.nvim',
+      'https://github.com/nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+    },
+  }
+
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if vim.g.flc_is_packer_bootstrapped then
