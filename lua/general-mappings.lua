@@ -68,11 +68,16 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
----------- INSERT MODE MAPPINGS ----------
--- shift+insert copies from XA_PRIMARY (mouse selection)
--- this mapping copies from XA_SECONDARY (clipboard)
--- equivalent to CTRL-V in other editors
-vim.api.nvim_set_keymap('i', '<c-V>', '"+gP', noremap)
+-- shift+insert copies from XA_PRIMARY (mouse selection, * register)
+-- this mapping copies/paste to/from XA_CLIPBOARD (clipboard, + register)
+-- equivalent to CTRL-C/CTRL-V in other editors
+--
+-- paste works in insert mode
+-- Watch out: it's CTRL-SHIFT-v, CTRL-v will paste the command instead
+vim.keymap.set('i', '<C-V>', '"+gP')
+-- copy needs to have something preselected, works in visual mode
+-- Watch out: this is just CTRL-c, CTRL-SHIFT-c won't work (BIG WTF?!)
+vim.keymap.set('v', '<C-C>', '"+y')
 
 ---------- COMMAND MODE MAPPINGS ----------
 -- regexp: set very magic when doing global substitutions
