@@ -77,12 +77,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- this mapping copies/paste to/from XA_CLIPBOARD (clipboard, + register)
 -- equivalent to CTRL-C/CTRL-V in other editors
 --
--- paste works in insert mode
--- Watch out: it's CTRL-SHIFT-v, CTRL-v will paste the command instead
-vim.keymap.set('i', '<C-V>', '"+gP')
+-- no need to map paste: in insert mode the terminal will handle it with
+-- CTRL-SHIFT-v
 -- copy needs to have something preselected, works in visual mode
--- Watch out: this is just CTRL-c, CTRL-SHIFT-c won't work (BIG WTF?!)
-vim.keymap.set('v', '<C-C>', '"+y')
+vim.keymap.set('v', '<c-c>', '"+y')
 
 ---------- COMMAND MODE MAPPINGS ----------
 -- regexp: set very magic when doing global substitutions
