@@ -79,6 +79,7 @@ require('packer').startup(function(use)
       }
   }
 
+  -- bufferline: sits on the top and shows buffer/tab/windows file names
   use {
     'https://github.com/willothy/nvim-cokeline',
     requires = {
