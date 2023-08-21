@@ -14,6 +14,7 @@ end
 require('general-settings')
 require('style')
 require('general-mappings')
+require('general-commands')
 require('autocommands')
 
 -- LSP settings.
