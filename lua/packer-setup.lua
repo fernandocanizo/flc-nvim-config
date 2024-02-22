@@ -66,8 +66,6 @@ require('packer').startup(function(use)
   -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
 
-  use { 'https://github.com/editorconfig/editorconfig-vim' }
-
   -- file navigator
   use {
     'https://github.com/nvim-neo-tree/neo-tree.nvim',
