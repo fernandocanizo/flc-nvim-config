@@ -54,6 +54,11 @@ nmap('q', ':q<enter>')
 
 -- don't loose your vertical split when closing a buffer
 nmap('<C-c>', ':bp|bd #<enter>')
+-- move between splits like you move in games ;) by using Shift
+-- nmap('<S-a>', '<C-W><C-H>')
+-- nmap('<S-s>', '<C-W><C-J>')
+-- nmap('<S-d>', '<C-W><C-L>')
+-- nmap('<S-w>', '<C-W><C-K>')
 
 -- tab fun
 nmap('<Leader><Down>', ':tabnew<return>')
