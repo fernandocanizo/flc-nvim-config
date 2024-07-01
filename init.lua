@@ -139,8 +139,17 @@ cmp.setup {
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
+      -- 2024-01-12
+      -- TODO check what does the next 
+      -- I commented it because my cursor was jumping around like crazy on TAG
+      -- pressing. Usually after pressing `o` to go to a new line. But sometimes
+      -- when pressing ENTER on insert mode, if I needed a new indentation
+      -- level, pressing TAB instead of inserting the character moved me around,
+      -- usually to the beginning, but the behavior wasn't regular. Sometimes
+      -- worked well. So I'm commenting this to see if that solves it.
+      -- But I'd like to know what I'm missing, so investigate that function
+      -- elseif luasnip.expand_or_jumpable() then
+        -- luasnip.expand_or_jump()
       else
         fallback()
       end
