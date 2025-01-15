@@ -170,5 +170,80 @@ cmp.setup {
   },
 }
 
+local lspconfig = require 'lspconfig'
+lspconfig.denols.setup({
+  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+  init_options = {
+    lint = true,
+    unstable = true,
+    suggest = {
+      imports = {
+        hosts = {
+          ["https://deno.land"] = true,
+          ["https://cdn.nest.land"] = true,
+          ["https://crux.land"] = true,
+        },
+      },
+    },
+  },
+
+  on_attach = on_attach,
+})
+
+-- Don't attach `ts_ls` on Deno projects
+lspconfig.ts_ls.setup({
+  on_attach = function (client, bufnr)
+    on_attach(client, bufnr);
+    vim.keymap.set('n', '<leader>ro', function()
+      vim.lsp.buf.execute_command({
+        command = "_typescript.organizeImports",
+        arguments = { vim.fn.expand("%:p") }
+      })
+    end, { buffer = bufnr,  remap = false });
+  end,
+
+  root_dir = function (filename)
+    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
+    if denoRootDir then
+      -- print('this seems to be a deno project; returning nil so that `ts_ls` does not attach');
+      return nil;
+    else
+      -- print('this seems to be a ts project; return root dir based on `package.json`')
+      return lspconfig.util.root_pattern("package.json")(filename);
+    end
+  end,
+  single_file_support = false,
+})
+
+-- Don't attach `eslint` on Deno projects
+lspconfig.eslint.setup({
+  root_dir = function (filename)
+    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
+    if denoRootDir then
+      -- print('this seems to be a deno project; returning nil so that `eslint` does not attach');
+      return nil;
+    else
+      -- print('this seems to be a ts project; return root dir based on `package.json`')
+      return lspconfig.util.root_pattern("package.json")(filename);
+    end
+  end,
+  single_file_support = false,
+})
+
+-- Don't attach `htmx` on Deno projects
+lspconfig.htmx.setup({
+  root_dir = function (filename)
+    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
+    if denoRootDir then
+      -- print('this seems to be a deno project; returning nil so that `htmx` does not attach');
+      return nil;
+    else
+      -- print('this seems to be a ts project; return root dir based on `package.json`')
+      return lspconfig.util.root_pattern("package.json")(filename);
+    end
+  end,
+  single_file_support = false,
+})
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
