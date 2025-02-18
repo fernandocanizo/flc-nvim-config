@@ -170,6 +170,11 @@ cmp.setup {
   },
 }
 
+-- from https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#denols
+vim.g.markdown_fenced_languages = {
+  "ts=typescript"
+}
+
 local lspconfig = require 'lspconfig'
 lspconfig.denols.setup({
   root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
