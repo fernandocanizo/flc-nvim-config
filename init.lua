@@ -223,9 +223,10 @@ lspconfig.ts_ls.setup({
 -- Don't attach `eslint` on Deno projects
 lspconfig.eslint.setup({
   root_dir = function (filename)
-    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
-    if denoRootDir then
-      -- print('this seems to be a deno project; returning nil so that `eslint` does not attach');
+    local isDenoOrBiome = lspconfig.util.root_pattern("deno.json", "deno.jsonc", "biome.json")(filename);
+    if isDenoOrBiome then
+      -- print('this seems to be a deno project or a Biome project');
+      -- returning nil so that `eslint` does not attach
       return nil;
     else
       -- print('this seems to be a ts project; return root dir based on `package.json`')
