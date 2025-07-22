@@ -236,6 +236,15 @@ lspconfig.eslint.setup({
   single_file_support = false,
 })
 
+-- Attach Biome if we find its configuration
+lspconfig.biome.setup({
+  root_dir = lspconfig.util.root_pattern("biome.json"),
+  single_file_support = false,
+  on_attach = function(client, bufnr)
+    print("Biome LSP attached to buffer: " .. bufnr)
+  end,
+})
+
 -- Don't attach `htmx` on Deno projects
 lspconfig.htmx.setup({
   root_dir = function (filename)
