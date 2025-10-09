@@ -62,35 +62,25 @@ local on_attach = function(_, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
-local servers = {
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-
-  --  flc 2023-07-10: me sale un mensaje de que 'sumneko_lua' no es una entrada válida
-  --  ver: https://github.com/nvim-lua/kickstart.nvim/issues/179
-  lua_ls = {
-    Lua = {
-      -- Disable "Undefined global `vim`" message
-      diagnostics = {
-        globals = {'vim'}
-      },
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-    },
-  },
-}
-
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+vim.lsp.config("lua_ls", {
+  cmd = { "lua-language-server" },
+  capabilities = capabilities,
+  on_attach = on_attach,
+
+  settings = {
+    Lua = {
+      diagnostics = { globals = { "vim" } }, -- ← silences “Undefined global ‘vim’”
+      workspace = { checkThirdParty = false },
+      telemetry = { enable = false },
+      runtime = { version = "LuaJIT" }, -- good default for Neovim
+      completion = { callSnippet = "Replace" },
+    },
+  },
+})
 
 -- Setup mason so it can manage external tooling
 require('mason').setup()
@@ -99,20 +89,10 @@ require('mason').setup()
 local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
-  ensure_installed = vim.tbl_keys(servers),
-}
-
-mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = servers[server_name],
-      -- should I set it up for any LS?
-      -- single_file_support = server_name == 'tsserver' or server_name == 'eslint',
-      single_file_support = true
-    }
-  end,
+  ensure_installed = { "lua_ls", "denols", "ts_ls", "biome" },
+  -- v2 auto-enables installed servers via vim.lsp.enable()
+  -- turn it off if you prefer to enable manually:
+  automatic_enable = false,
 }
 
 -- Turn on lsp status information
@@ -175,9 +155,32 @@ vim.g.markdown_fenced_languages = {
   "ts=typescript"
 }
 
-local lspconfig = require 'lspconfig'
-lspconfig.denols.setup({
-  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+-- denols: attach only inside a Deno project: contains a deno.json or deno.jsonc file
+vim.lsp.config("denols", {
+  cmd = { "deno", "lsp" },
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+
+  root_dir = function(arg)  -- arg = bufnr|string|nil
+    print("[denols] root_dir called with arg:", vim.inspect(arg))
+
+    local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
+      or type(arg) == "string" and arg
+      or vim.api.nvim_buf_get_name(0)
+    print("[denols] filepath:", filepath)
+
+    local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
+    print("[denols] start directory:", start)
+
+    local denoConfigFile = vim.fs.find({ "deno.json", "deno.jsonc" }, { path = start, upward = true })[1]
+    print("[denols] found deno config:", denoConfigFile)
+
+    local rootDir = denoConfigFile and vim.fs.dirname(denoConfigFile) or nil
+    print("[denols] returning root_dir:", rootDir)
+
+    return rootDir
+  end,
+
+  capabilities = capabilities,
   init_options = {
     lint = true,
     unstable = true,
@@ -191,74 +194,93 @@ lspconfig.denols.setup({
       },
     },
   },
-
   on_attach = on_attach,
+  single_file_support = false,
 })
 
--- Don't attach `ts_ls` on Deno projects
-lspconfig.ts_ls.setup({
-  on_attach = function (client, bufnr)
-    on_attach(client, bufnr);
-    vim.keymap.set('n', '<leader>ro', function()
-      vim.lsp.buf.execute_command({
-        command = "_typescript.organizeImports",
-        arguments = { vim.fn.expand("%:p") }
-      })
-    end, { buffer = bufnr,  remap = false });
+vim.lsp.config("ts_ls", {
+  cmd = { "typescript-language-server", "--stdio" },
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
+
+  root_dir = function(arg)  -- arg can be bufnr|string|nil
+    print("[ts_ls] root_dir called with arg:", vim.inspect(arg))
+
+    local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
+      or type(arg) == "string" and arg
+      or vim.api.nvim_buf_get_name(0)
+    print("[ts_ls] filepath:", filepath)
+
+    local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
+    print("[ts_ls] start directory:", start)
+
+    local tsConfigFile = vim.fs.find({ "tsconfig.json" }, { path = start, upward = true })[1]
+    print("[ts_ls] found Typescript config:", tsConfigFile)
+
+    local rootDir = tsConfigFile and vim.fs.dirname(tsConfigFile) or nil
+    print("[ts_ls] returning root_dir:", rootDir)
+
+    return rootDir
   end,
 
-  root_dir = function (filename)
-    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
-    if denoRootDir then
-      -- print('this seems to be a deno project; returning nil so that `ts_ls` does not attach');
-      return nil;
-    else
-      -- print('this seems to be a ts project; return root dir based on `package.json`')
-      return lspconfig.util.root_pattern("package.json")(filename);
-    end
+  capabilities = capabilities,
+  on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+    -- <leader>ro => organize imports
+    vim.keymap.set("n", "<leader>ro", function()
+      vim.lsp.buf.execute_command({
+        command = "_typescript.organizeImports",
+        arguments = { vim.fn.expand("%:p") },
+      })
+    end, { buffer = bufnr, remap = false })
   end,
-  single_file_support = false,
+
+  single_file_support = true,
 })
 
 -- Don't attach `eslint` on Deno projects
-lspconfig.eslint.setup({
-  root_dir = function (filename)
-    local isDenoOrBiome = lspconfig.util.root_pattern("deno.json", "deno.jsonc", "biome.json")(filename);
-    if isDenoOrBiome then
+-- lspconfig.eslint.setup({
+  -- root_dir = function (filename)
+    -- local isDenoOrBiome = lspconfig.util.root_pattern("deno.json", "deno.jsonc", "biome.json")(filename);
+    -- if isDenoOrBiome then
       -- print('this seems to be a deno project or a Biome project');
       -- returning nil so that `eslint` does not attach
-      return nil;
-    else
+      -- return nil;
+    -- else
       -- print('this seems to be a ts project; return root dir based on `package.json`')
-      return lspconfig.util.root_pattern("package.json")(filename);
-    end
-  end,
-  single_file_support = false,
-})
+      -- return lspconfig.util.root_pattern("package.json")(filename);
+    -- end
+  -- end,
+  -- single_file_support = false,
+-- })
 
 -- Attach Biome if we find its configuration
-lspconfig.biome.setup({
-  root_dir = lspconfig.util.root_pattern("biome.json"),
-  single_file_support = false,
-  on_attach = function(client, bufnr)
-    print("Biome LSP attached to buffer: " .. bufnr)
-  end,
-})
+-- lspconfig.biome.setup({
+  -- root_dir = lspconfig.util.root_pattern("biome.json"),
+  -- single_file_support = false,
+  -- on_attach = function(client, bufnr)
+    -- print("Biome LSP attached to buffer: " .. bufnr)
+  -- end,
+-- })
 
 -- Don't attach `htmx` on Deno projects
-lspconfig.htmx.setup({
-  root_dir = function (filename)
-    local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
-    if denoRootDir then
+-- lspconfig.htmx.setup({
+  -- root_dir = function (filename)
+    -- local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
+    -- if denoRootDir then
       -- print('this seems to be a deno project; returning nil so that `htmx` does not attach');
-      return nil;
-    else
+      -- return nil;
+    -- else
       -- print('this seems to be a ts project; return root dir based on `package.json`')
-      return lspconfig.util.root_pattern("package.json")(filename);
-    end
-  end,
-  single_file_support = false,
-})
+      -- return lspconfig.util.root_pattern("package.json")(filename);
+    -- end
+  -- end,
+  -- single_file_support = false,
+-- })
+
+-- Enable LSP servers
+vim.lsp.enable('denols')
+vim.lsp.enable('lua_ls')
+vim.lsp.enable('ts_ls')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
