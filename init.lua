@@ -1,5 +1,11 @@
 require('packer-setup')
 
+local debugOff = true
+local debug = function(...)
+  if debugOff then return end
+  print(...)
+end
+
 -- When we are bootstrapping a configuration, it doesn't
 -- make sense to execute the rest of the init.lua.
 if vim.g.flc_is_packer_bootstrapped then
@@ -161,21 +167,21 @@ vim.lsp.config("denols", {
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 
   root_dir = function(arg)  -- arg = bufnr|string|nil
-    print("[denols] root_dir called with arg:", vim.inspect(arg))
+    debug("[denols] root_dir called with arg:", vim.inspect(arg))
 
     local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
       or type(arg) == "string" and arg
       or vim.api.nvim_buf_get_name(0)
-    print("[denols] filepath:", filepath)
+    debug("[denols] filepath:", filepath)
 
     local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
-    print("[denols] start directory:", start)
+    debug("[denols] start directory:", start)
 
     local denoConfigFile = vim.fs.find({ "deno.json", "deno.jsonc" }, { path = start, upward = true })[1]
-    print("[denols] found deno config:", denoConfigFile)
+    debug("[denols] Deno config:", denoConfigFile)
 
     local rootDir = denoConfigFile and vim.fs.dirname(denoConfigFile) or nil
-    print("[denols] returning root_dir:", rootDir)
+    debug("[denols] root_dir:", rootDir)
 
     return rootDir
   end,
@@ -203,21 +209,21 @@ vim.lsp.config("ts_ls", {
   filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
 
   root_dir = function(arg)  -- arg can be bufnr|string|nil
-    print("[ts_ls] root_dir called with arg:", vim.inspect(arg))
+    debug("[ts_ls] root_dir called with arg:", vim.inspect(arg))
 
     local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
       or type(arg) == "string" and arg
       or vim.api.nvim_buf_get_name(0)
-    print("[ts_ls] filepath:", filepath)
+    debug("[ts_ls] filepath:", filepath)
 
     local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
-    print("[ts_ls] start directory:", start)
+    debug("[ts_ls] start directory:", start)
 
     local tsConfigFile = vim.fs.find({ "tsconfig.json" }, { path = start, upward = true })[1]
-    print("[ts_ls] found Typescript config:", tsConfigFile)
+    debug("[ts_ls] Typescript config:", tsConfigFile)
 
     local rootDir = tsConfigFile and vim.fs.dirname(tsConfigFile) or nil
-    print("[ts_ls] returning root_dir:", rootDir)
+    debug("[ts_ls] root_dir:", rootDir)
 
     return rootDir
   end,
