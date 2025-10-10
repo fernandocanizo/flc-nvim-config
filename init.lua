@@ -247,21 +247,33 @@ vim.lsp.config("ts_ls", {
   single_file_support = true,
 })
 
--- Don't attach `eslint` on Deno projects
--- lspconfig.eslint.setup({
-  -- root_dir = function (filename)
-    -- local isDenoOrBiome = lspconfig.util.root_pattern("deno.json", "deno.jsonc", "biome.json")(filename);
-    -- if isDenoOrBiome then
-      -- print('this seems to be a deno project or a Biome project');
-      -- returning nil so that `eslint` does not attach
-      -- return nil;
-    -- else
-      -- print('this seems to be a ts project; return root dir based on `package.json`')
-      -- return lspconfig.util.root_pattern("package.json")(filename);
-    -- end
-  -- end,
-  -- single_file_support = false,
--- })
+-- Start Eslint only if we find a configuration file for it
+vim.lsp.config("eslint", {
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
+
+  root_dir = function(bufnr, on_dir)
+    local filepath = vim.api.nvim_buf_get_name(bufnr)
+    debug("[eslint] filepath:", filepath)
+
+    local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
+    debug("[eslint] start directory:", start)
+
+    local configFile = vim.fs.find({ "eslint.config.js", "eslint.config.mjs", "eslint.config.cjs", "eslint.config.ts", "eslint.config.mts", "eslint.config.cts" }, { path = start, upward = true })[1]
+    debug("[eslint] config:", configFile)
+
+    local rootDir = configFile and vim.fs.dirname(configFile) or nil
+    debug("[denols] root_dir:", rootDir)
+
+    if configFile then
+      on_dir(rootDir)
+    end
+  end,
+
+  capabilities = capabilities,
+  on_attach = on_attach,
+  single_file_support = false,
+})
+
 
 -- Attach Biome if we find its configuration
 -- lspconfig.biome.setup({
