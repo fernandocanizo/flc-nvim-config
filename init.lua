@@ -301,22 +301,11 @@ vim.lsp.config("biome", {
   single_file_support = false,
 })
 
-
--- Don't attach `htmx` on Deno projects
--- lspconfig.htmx.setup({
-  -- root_dir = function (filename)
-    -- local denoRootDir = lspconfig.util.root_pattern("deno.json", "deno.jsonc")(filename);
-    -- if denoRootDir then
-      -- print('this seems to be a deno project; returning nil so that `htmx` does not attach');
-      -- return nil;
-    -- else
-      -- print('this seems to be a ts project; return root dir based on `package.json`')
-      -- return lspconfig.util.root_pattern("package.json")(filename);
-    -- end
-  -- end,
-  -- single_file_support = false,
--- })
-
+-- Finding out if a project uses htmx is a little bit more convoluted as there's
+-- no configuration file and there are several ways to use htmx.
+-- For the time being I'll just disable it as I haven't used it much so far, so
+-- there's no point in configuring something I barely have used yet.
+vim.lsp.enable('htmx', false)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
