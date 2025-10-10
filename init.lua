@@ -262,7 +262,7 @@ vim.lsp.config("eslint", {
     debug("[eslint] config:", configFile)
 
     local rootDir = configFile and vim.fs.dirname(configFile) or nil
-    debug("[denols] root_dir:", rootDir)
+    debug("[eslint] root_dir:", rootDir)
 
     if configFile then
       on_dir(rootDir)
@@ -274,15 +274,33 @@ vim.lsp.config("eslint", {
   single_file_support = false,
 })
 
+-- Start Biome only if we find its configuration
+vim.lsp.config("biome", {
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
 
--- Attach Biome if we find its configuration
--- lspconfig.biome.setup({
-  -- root_dir = lspconfig.util.root_pattern("biome.json"),
-  -- single_file_support = false,
-  -- on_attach = function(client, bufnr)
-    -- print("Biome LSP attached to buffer: " .. bufnr)
-  -- end,
--- })
+  root_dir = function(bufnr, on_dir)
+    local filepath = vim.api.nvim_buf_get_name(bufnr)
+    debug("[biome] filepath:", filepath)
+
+    local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
+    debug("[biome] start directory:", start)
+
+    local configFile = vim.fs.find({ "biome.json" }, { path = start, upward = true })[1]
+    debug("[biome] config:", configFile)
+
+    local rootDir = configFile and vim.fs.dirname(configFile) or nil
+    debug("[biome] root_dir:", rootDir)
+
+    if configFile then
+      on_dir(rootDir)
+    end
+  end,
+
+  capabilities = capabilities,
+  on_attach = on_attach,
+  single_file_support = false,
+})
+
 
 -- Don't attach `htmx` on Deno projects
 -- lspconfig.htmx.setup({
