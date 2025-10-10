@@ -221,7 +221,7 @@ vim.lsp.config("ts_ls", {
     local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
     debug("[ts_ls] start directory:", start)
 
-    local tsConfigFile = vim.fs.find({ "tsconfig.json" }, { path = start, upward = true })[1]
+    local tsConfigFile = vim.fs.find({ "tsconfig.json", "package.json" }, { path = start, upward = true })[1]
     debug("[ts_ls] Typescript config:", tsConfigFile)
 
     local rootDir = tsConfigFile and vim.fs.dirname(tsConfigFile) or nil
