@@ -174,12 +174,8 @@ vim.lsp.config("denols", {
   cmd = { "deno", "lsp" },
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
 
-  root_dir = function(arg)  -- arg = bufnr|string|nil
-    debug("[denols] root_dir called with arg:", vim.inspect(arg))
-
-    local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
-      or type(arg) == "string" and arg
-      or vim.api.nvim_buf_get_name(0)
+  root_dir = function(bufnr, on_dir)
+    local filepath = vim.api.nvim_buf_get_name(bufnr)
     debug("[denols] filepath:", filepath)
 
     local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
@@ -191,7 +187,9 @@ vim.lsp.config("denols", {
     local rootDir = denoConfigFile and vim.fs.dirname(denoConfigFile) or nil
     debug("[denols] root_dir:", rootDir)
 
-    return rootDir
+    if denoConfigFile then
+      on_dir(rootDir)
+    end
   end,
 
   capabilities = capabilities,
@@ -216,12 +214,8 @@ vim.lsp.config("ts_ls", {
   cmd = { "typescript-language-server", "--stdio" },
   filetypes = { "typescript", "typescriptreact", "typescript.tsx", "javascript", "javascriptreact", "javascript.jsx" },
 
-  root_dir = function(arg)  -- arg can be bufnr|string|nil
-    debug("[ts_ls] root_dir called with arg:", vim.inspect(arg))
-
-    local filepath = type(arg) == "number" and vim.api.nvim_buf_get_name(arg)
-      or type(arg) == "string" and arg
-      or vim.api.nvim_buf_get_name(0)
+  root_dir = function(bufnr, on_dir)
+    local filepath = vim.api.nvim_buf_get_name(bufnr)
     debug("[ts_ls] filepath:", filepath)
 
     local start = (filepath ~= "" and vim.fs.dirname(filepath)) or vim.uv.cwd()
@@ -233,7 +227,9 @@ vim.lsp.config("ts_ls", {
     local rootDir = tsConfigFile and vim.fs.dirname(tsConfigFile) or nil
     debug("[ts_ls] root_dir:", rootDir)
 
-    return rootDir
+    if tsConfigFile then
+      on_dir(rootDir)
+    end
   end,
 
   capabilities = capabilities,
