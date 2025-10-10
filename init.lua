@@ -6,6 +6,14 @@ local debug = function(...)
   print(...)
 end
 
+vim.diagnostic.config({
+  -- shows [source] in virtual text
+  virtual_text = { source = true },
+  signs = true,
+  -- also in floats
+  float = { source = "always", border = "rounded" },
+})
+
 -- When we are bootstrapping a configuration, it doesn't
 -- make sense to execute the rest of the init.lua.
 if vim.g.flc_is_packer_bootstrapped then
