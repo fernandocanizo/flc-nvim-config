@@ -106,7 +106,7 @@ mason_lspconfig.setup {
   ensure_installed = { "lua_ls", "denols", "ts_ls", "biome" },
   -- v2 auto-enables installed servers via vim.lsp.enable()
   -- turn it off if you prefer to enable manually:
-  automatic_enable = false,
+  -- automatic_enable = false,
 }
 
 -- Turn on lsp status information
@@ -291,10 +291,6 @@ vim.lsp.config("ts_ls", {
   -- single_file_support = false,
 -- })
 
--- Enable LSP servers
-vim.lsp.enable('denols')
-vim.lsp.enable('lua_ls')
-vim.lsp.enable('ts_ls')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
