@@ -104,7 +104,7 @@ local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
   ensure_installed = { "lua_ls", "denols", "ts_ls", "biome" },
-  -- v2 auto-enables installed servers via vim.lsp.enable()
+  -- mason-lspconfig auto-enables installed servers via vim.lsp.enable()
   -- turn it off if you prefer to enable manually:
   -- automatic_enable = false,
 }

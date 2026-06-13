@@ -21,11 +21,11 @@ require('packer').startup(function(use)
     'neovim/nvim-lspconfig',
     requires = {
       -- Automatically install LSPs to stdpath for neovim
-      { 'mason-org/mason.nvim', tag = "v2.1.0" },
-      { "mason-org/mason-lspconfig.nvim", tag = "v2.1.0" },
+      'mason-org/mason.nvim',
+      'mason-org/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP
-      { 'j-hui/fidget.nvim', tag = 'legacy' },
+      { 'j-hui/fidget.nvim', branch = 'legacy' },
 
       -- Additional lua configuration, makes nvim stuff amazing
       'folke/neodev.nvim',
@@ -40,7 +40,9 @@ require('packer').startup(function(use)
   use { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     run = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
+      pcall(function()
+        require('nvim-treesitter.install').update()
+      end)
     end,
   }
 
